@@ -2,7 +2,6 @@ package com.soap.pokemon.service.impl;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,14 +18,17 @@ public class PokemonServiceImpl implements PokemonService {
 
     private static final String POKEAPI_URL = "https://pokeapi.co/api/v2/pokemon/";
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private LogEndpointRepository logRepository;
+    private final LogEndpointRepository logRepository;
 
-    @Autowired(required = false)
-    private HttpServletRequest httpRequest;
+    private final HttpServletRequest httpRequest;
+
+    public PokemonServiceImpl(RestTemplate restTemplate, LogEndpointRepository logRepository, HttpServletRequest httpRequest){
+        this.restTemplate = restTemplate;
+        this.logRepository = logRepository;
+        this.httpRequest = httpRequest;
+    }
 
     private void saveLog(String metodo, String requestParam, String responseValue, long duration, HttpServletRequest request) {
         LogEndpoint log = new LogEndpoint();

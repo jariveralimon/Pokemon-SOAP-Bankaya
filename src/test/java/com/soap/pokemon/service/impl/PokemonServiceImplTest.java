@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
@@ -48,7 +47,7 @@ class PokemonServiceImplTest {
     @Test
     void testGetAbilities() {
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponse);
 
@@ -70,7 +69,7 @@ class PokemonServiceImplTest {
 
             assertNotNull(abilities);
             assertEquals(parsedAbilities, abilities);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseAbilities(mockJsonResponse), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }
@@ -80,7 +79,7 @@ class PokemonServiceImplTest {
     @Test
     void testGetAbilitiesWithNullHttpRequest() {
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponse);
 
@@ -98,7 +97,10 @@ class PokemonServiceImplTest {
 
             when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            pokemonService.getAbilities(pokemonName);
+            String abilities = pokemonService.getAbilities(pokemonName);
+
+            // Assertions
+            assertNotNull(abilities, "The abilities no debe de ser null");
         }
     }
 
@@ -109,7 +111,7 @@ class PokemonServiceImplTest {
         int expectedBaseExperience = 112;
 
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetBaseExperience);
 
@@ -130,7 +132,7 @@ class PokemonServiceImplTest {
             int baseExperience = pokemonService.getBaseExperience(pokemonName);
 
             assertEquals(expectedBaseExperience, baseExperience);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseBaseExperience(mockJsonResponseTestGetBaseExperience), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }
@@ -139,11 +141,11 @@ class PokemonServiceImplTest {
     @SuppressWarnings("unchecked")
     @Test
     void testGetHeldItems() {
-        String mockJsonResponseTestGetHeldItems= "{\"held_items\":[{\"item\":{\"name\":\"oran-berry\"}},{\"item\":{\"name\":\"sitrus-berry\"}}]}";
+        String mockJsonResponseTestGetHeldItems = "{\"held_items\":[{\"item\":{\"name\":\"oran-berry\"}},{\"item\":{\"name\":\"sitrus-berry\"}}]}";
         String expectedHeldItems = "oran-berry, sitrus-berry";
 
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetHeldItems);
 
@@ -165,7 +167,7 @@ class PokemonServiceImplTest {
 
             assertNotNull(heldItems);
             assertEquals(expectedHeldItems, heldItems);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseHeldItems(mockJsonResponseTestGetHeldItems), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }
@@ -178,7 +180,7 @@ class PokemonServiceImplTest {
         int expectedId = 25;
 
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetId);
 
@@ -199,7 +201,7 @@ class PokemonServiceImplTest {
             int id = pokemonService.getId(pokemonName);
 
             assertEquals(expectedId, id);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseId(mockJsonResponseTestGetId), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }
@@ -212,7 +214,7 @@ class PokemonServiceImplTest {
         String expectedName = "pikachu";
 
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetName);
 
@@ -234,7 +236,7 @@ class PokemonServiceImplTest {
 
             assertNotNull(name);
             assertEquals(expectedName, name);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseName(mockJsonResponseTestGetName), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }
@@ -247,7 +249,7 @@ class PokemonServiceImplTest {
         String expectedLocationAreaEncounters = "kanto-route-2";
 
         ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class)))
+        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
                 .thenReturn(mockResponse);
         when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetLocationAreaEncounters);
 
@@ -269,7 +271,7 @@ class PokemonServiceImplTest {
 
             assertNotNull(locationAreaEncounters);
             assertEquals(expectedLocationAreaEncounters, locationAreaEncounters);
-            verify(restTemplate, times(1)).getForEntity(eq("https://pokeapi.co/api/v2/pokemon/" + pokemonName), eq(String.class));
+            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
             mockStatic.verify(() -> JsonParser.parseLocationAreaEncounters(mockJsonResponseTestGetLocationAreaEncounters), times(1));
             verify(logRepository, times(1)).save(any(LogEndpoint.class));
         }

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.soap.pokemon.PokemonApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.117 s -- in com.soap.pokemon.PokemonApplicationTests

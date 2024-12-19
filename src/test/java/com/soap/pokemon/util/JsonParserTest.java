@@ -1,8 +1,11 @@
 package com.soap.pokemon.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 class JsonParserTest {
@@ -74,7 +77,7 @@ class JsonParserTest {
 
         String result = JsonParser.parseAbilities(invalidJson);
 
-        assertEquals(true, result.startsWith(expected));
+        assertTrue(result.startsWith(expected));
     }
 
     @Test
@@ -94,7 +97,7 @@ class JsonParserTest {
 
         String result = JsonParser.parseHeldItems(invalidJson);
 
-        assertEquals(true, result.startsWith(expected));
+        assertTrue(result.startsWith(expected));
     }
 
     @Test
@@ -114,7 +117,7 @@ class JsonParserTest {
 
         String result = JsonParser.parseName(invalidJson);
 
-        assertEquals(true, result.startsWith(expected));
+        assertTrue(result.startsWith(expected));
     }
 
     @Test
@@ -124,16 +127,25 @@ class JsonParserTest {
 
         String result = JsonParser.parseLocationAreaEncounters(invalidJson);
 
-        assertEquals(true, result.startsWith(expected));
+        assertTrue(result.startsWith(expected));
     }
 
     @Test
-    void testJsonParserClassInstantiation() {
+    void testJsonParserCannotBeInstantiated() {
+        // Obtén el constructor privado de la clase JsonParser
+        Constructor<JsonParser> constructor;
         try {
-            JsonParser instance = new JsonParser();
-            assertNotNull(instance, "JsonParser instance should not be null");
-        } catch (Exception e) {
-            fail("JsonParser should be instantiable, but instance is ignored in real use.");
+            constructor = JsonParser.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+
+            // Verifica que intentar usar el constructor privado lanza UnsupportedOperationException
+            InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+
+            // Valida que la causa de la excepción sea UnsupportedOperationException
+            assertTrue(exception.getCause() instanceof UnsupportedOperationException, 
+                "Expected cause to be UnsupportedOperationException");
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException("Error al acceder al constructor privado", e);
         }
     }
 }

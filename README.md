@@ -13,6 +13,7 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 - **Java 17** o superior
 - **Maven** para la construcción del proyecto
 - **Podman** o **Docker** para contenedores
+- **SonarQube** para el análisis de calidad de código
 
 ## Instalación
 
@@ -25,7 +26,7 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 2. **Construye el proyecto**:
    Si tienes Maven instalado, usa el siguiente comando para compilar y empaquetar el proyecto:
    ```bash
-   ./mvnw clean package
+   mvn clean package
    ```
 
 3. **Ejecuta el servicio**:
@@ -45,6 +46,17 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 
 4. **Accede al WSDL**:
    El WSDL estará disponible en `http://localhost:8080/ws/pokemon.wsdl`.
+
+5. **Analiza el código con SonarQube**:
+
+   - Asegúrate de tener un proyecto en SonarQube llamado **pokemon**.
+   - Ejecuta el siguiente comando para enviar el análisis:
+     ```bash
+     mvn sonar:sonar -Dsonar.login=<TOKEN>
+     ```
+     Reemplaza `<TOKEN>` con el token generado anteriormente para el proyecto **pokemon**.
+
+---
 
 ## Estrategia de Branching
 
@@ -108,12 +120,9 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 - Se utilizan pruebas unitarias para asegurar que el código funcione como se espera. Puedes ejecutar las pruebas con Maven:
 
   ```bash
-  ./mvnw test
+  mvn test
   ```
 
 ### **Pruebas SOAP**
 
 - Usa SoapUI para realizar pruebas de la API SOAP en `http://localhost:8080/ws/pokemon.wsdl`.
-
----
-
