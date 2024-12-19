@@ -13,7 +13,6 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 - **Java 17** o superior
 - **Maven** para la construcción del proyecto
 - **Podman** o **Docker** para contenedores
-- **SonarQube** para el análisis de calidad de código
 
 ## Instalación
 
@@ -47,14 +46,66 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 4. **Accede al WSDL**:
    El WSDL estará disponible en `http://localhost:8080/ws/pokemon.wsdl`.
 
-5. **Analiza el código con SonarQube**:
+## Pruebas
 
-   - Asegúrate de tener un proyecto en SonarQube llamado **pokemon**.
-   - Ejecuta el siguiente comando para enviar el análisis:
-     ```bash
-     mvn sonar:sonar -Dsonar.login=<TOKEN>
-     ```
-     Reemplaza `<TOKEN>` con el token generado anteriormente para el proyecto **pokemon**.
+### **Pruebas Unitarias**
+
+- Se utilizan pruebas unitarias para asegurar que el código funcione como se espera. Puedes ejecutar las pruebas con Maven:
+
+  ```bash
+  mvn test
+  ```
+
+### **Pruebas SOAP**
+
+- Usa SoapUI para realizar pruebas de la API SOAP en `http://localhost:8080/ws/pokemon.wsdl`.
+
+## Análisis en SonarQube
+
+### **Paso 1: Crear Proyecto en SonarQube**
+- En tu instancia de SonarQube, crea un nuevo proyecto llamado **pokemon**.
+- Una vez creado, obtendrás un **token** para acceder al análisis del proyecto.
+
+### **Paso 2: Ejecutar Análisis en SonarQube**
+- Para ejecutar el análisis en SonarQube, usa el siguiente comando:
+
+  ```bash
+  mvn sonar:sonar -Dsonar.login=<TOKEN>
+  ```
+
+  Recuerda reemplazar `<TOKEN>` con el token generado al crear el proyecto en SonarQube.
+
+## Acceso a la Base de Datos H2
+
+Si deseas revisar la base de datos H2 que se utiliza en el servicio, una vez levantado el servicio, en tu navegador dirígete a la siguiente URL:
+
+**[http://localhost:8080/h2-console/](http://localhost:8080/h2-console/)**
+
+- Aparecerá una consola de sesión, pero solo es necesario modificar el campo llamado **JDBC URL**. Sustituye:
+
+  ```
+  jdbc:h2:~/test
+  ```
+
+  por:
+
+  ```
+  jdbc:h2:mem:pokemondb
+  ```
+
+- Luego presiona el botón **Conectar**.
+
+- Dentro de la **H2 Console**, encontrarás una tabla llamada `LOG_ENDPOINTS`.
+
+- Al seleccionarla, en la caja de texto aparecerá automáticamente la siguiente consulta:
+
+  ```sql
+  SELECT * FROM LOG_ENDPOINTS
+  ```
+
+- Solo es necesario presionar el botón **RUN** para obtener los datos insertados por el servicio.
+
+**Nota**: Si reinicias el servicio, los datos se eliminarán, ya que se usan en memoria (`mem`).
 
 ---
 
@@ -112,17 +163,3 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
   ```
 
 - Una vez corregido, se hace merge a `main` y a `develop` para mantener la consistencia.
-
-## Pruebas
-
-### **Pruebas Unitarias**
-
-- Se utilizan pruebas unitarias para asegurar que el código funcione como se espera. Puedes ejecutar las pruebas con Maven:
-
-  ```bash
-  mvn test
-  ```
-
-### **Pruebas SOAP**
-
-- Usa SoapUI para realizar pruebas de la API SOAP en `http://localhost:8080/ws/pokemon.wsdl`.
