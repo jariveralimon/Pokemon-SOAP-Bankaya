@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.soap.pokemon.service.impl.PokemonServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.138 s -- in com.soap.pokemon.service.impl.PokemonServiceImplTest

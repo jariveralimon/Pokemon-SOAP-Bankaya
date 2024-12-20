@@ -111,6 +111,16 @@ Si deseas revisar la base de datos H2 que se utiliza en el servicio, una vez lev
 
 ## Estrategia de Branching
 
+- URl para revisión de Swagger:
+
+  ```
+  http://localhost:8080/swagger-ui/index.html
+  ```
+
+---
+
+## Estrategia de Branching
+
 ### **Main Branch (`main`)**
 - La rama `main` siempre debe contener la versión estable y funcional del proyecto.
 - Solo se debe realizar un merge a `main` desde ramas de `develop` o `hotfix`.

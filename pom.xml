@@ -96,6 +96,12 @@
 			<artifactId>mockito-inline</artifactId>
 			<version>5.1.0</version> <!-- Necesario para MockedStatic -->
 		</dependency>
+		<!-- Swagger OpenAPI -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

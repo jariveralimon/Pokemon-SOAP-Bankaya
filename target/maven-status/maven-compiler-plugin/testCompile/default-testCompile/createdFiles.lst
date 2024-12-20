@@ -1,4 +1,6 @@
 com/soap/pokemon/util/JsonParserTest.class
 com/soap/pokemon/service/impl/PokemonServiceImplTest.class
 com/soap/pokemon/PokemonApplicationTests.class
+com/soap/pokemon/endpoint/PokemonEndpointTest.class
+com/example/pokemon/ObjectFactoryTest.class
 com/soap/pokemon/model/LogEndpointTest.class

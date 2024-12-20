@@ -2,12 +2,14 @@ com/example/pokemon/GetLocationAreaEncountersResponse.class
 com/soap/pokemon/util/JsonParser.class
 com/soap/pokemon/service/impl/PokemonServiceImpl.class
 com/example/pokemon/GetIdResponse.class
+com/soap/pokemon/endpoint/SwaggerController.class
 com/example/pokemon/GetNameRequest.class
 com/example/pokemon/package-info.class
 com/example/pokemon/GetNameResponse.class
 com/example/pokemon/GetHeldItemsResponse.class
 com/example/pokemon/GetAbilitiesResponse.class
 com/example/pokemon/GetBaseExperienceResponse.class
+com/soap/pokemon/config/SwaggerConfig.class
 com/example/pokemon/GetHeldItemsRequest.class
 com/example/pokemon/GetIdRequest.class
 com/soap/pokemon/service/PokemonService.class

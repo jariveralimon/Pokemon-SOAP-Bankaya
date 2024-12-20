@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="3.0" xmlns="https://jakarta.ee/xml/ns/jaxb">
+  <!--
+
+Este archivo ha sido generado por Eclipse Implementation of JAXB v3.0.2 
+Visite https://eclipse-ee4j.github.io/jaxb-ri 
+Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
+Generado el: 2024.12.19 a las 10:11:34 PM MST 
+
+  -->
+  <bindings scd="x-schema::tns" xmlns:tns="http://www.example.com/pokemon">
+    <schemaBindings map="false">
+      <package name="com.example.pokemon"/>
+    </schemaBindings>
+    <bindings scd="tns:getAbilitiesRequest">
+      <class ref="com.example.pokemon.GetAbilitiesRequest"/>
+    </bindings>
+    <bindings scd="tns:getAbilitiesResponse">
+      <class ref="com.example.pokemon.GetAbilitiesResponse"/>
+    </bindings>
+    <bindings scd="tns:getBaseExperienceRequest">
+      <class ref="com.example.pokemon.GetBaseExperienceRequest"/>
+    </bindings>
+    <bindings scd="tns:getBaseExperienceResponse">
+      <class ref="com.example.pokemon.GetBaseExperienceResponse"/>
+    </bindings>
+    <bindings scd="tns:getHeldItemsRequest">
+      <class ref="com.example.pokemon.GetHeldItemsRequest"/>
+    </bindings>
+    <bindings scd="tns:getHeldItemsResponse">
+      <class ref="com.example.pokemon.GetHeldItemsResponse"/>
+    </bindings>
+    <bindings scd="tns:getIdRequest">
+      <class ref="com.example.pokemon.GetIdRequest"/>
+    </bindings>
+    <bindings scd="tns:getIdResponse">
+      <class ref="com.example.pokemon.GetIdResponse"/>
+    </bindings>
+    <bindings scd="tns:getNameRequest">
+      <class ref="com.example.pokemon.GetNameRequest"/>
+    </bindings>
+    <bindings scd="tns:getNameResponse">
+      <class ref="com.example.pokemon.GetNameResponse"/>
+    </bindings>
+    <bindings scd="tns:getLocationAreaEncountersRequest">
+      <class ref="com.example.pokemon.GetLocationAreaEncountersRequest"/>
+    </bindings>
+    <bindings scd="tns:getLocationAreaEncountersResponse">
+      <class ref="com.example.pokemon.GetLocationAreaEncountersResponse"/>
+    </bindings>
+  </bindings>
+</bindings>
+
