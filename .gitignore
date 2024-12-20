@@ -24,6 +24,9 @@ hs_err_pid*
 replay_pid*
 
 # Ignore all files and folders
-src/main/java/com/example/pokemon/
-src/main/java/META-INF/JAXB/
-target/
+src/main/java/com/example/pokemon/*
+!src/main/java/com/example/pokemon/.gitkeep
+src/main/java/META-INF/JAXB/*
+src/main/java/META-INF/JAXB/.gitkeep
+target/*
+target/.gitkeep
