@@ -23,5 +23,7 @@
 hs_err_pid*
 replay_pid*
 
-# Ignore all files and folders in src/main/java/com/example/
-src/main/java/com/example/
+# Ignore all files and folders
+src/main/java/com/example/pokemon/
+src/main/java/META-INF/JAXB/
+target/
