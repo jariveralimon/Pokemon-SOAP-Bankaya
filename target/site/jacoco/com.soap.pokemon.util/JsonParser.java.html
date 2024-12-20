@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pokemon</a> &gt; <a href="index.source.html" class="el_package">com.soap.pokemon.util</a> &gt; <span class="el_source">JsonParser.java</span></div><h1>JsonParser.java</h1><pre class="source lang-java linenums">package com.soap.pokemon.util;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class JsonParser {
+
+<span class="nc" id="L13">    private static final ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L14">    private static final Logger logger = LoggerFactory.getLogger(JsonParser.class);</span>
+
+    // Constructor privado para evitar instanciación de la clase
+<span class="nc" id="L17">    private JsonParser() {</span>
+<span class="nc" id="L18">        throw new UnsupportedOperationException(&quot;Utility class should not be instantiated&quot;);</span>
+    }
+
+    public static String parseAbilities(String json) {
+        try {
+<span class="nc" id="L23">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L24">            JsonNode abilities = root.path(&quot;abilities&quot;);</span>
+<span class="nc" id="L25">            StringBuilder result = new StringBuilder();</span>
+
+<span class="nc bnc" id="L27" title="All 2 branches missed.">            for (JsonNode abilityNode : abilities) {</span>
+<span class="nc" id="L28">                result.append(abilityNode.path(&quot;ability&quot;).path(&quot;name&quot;).asText()).append(&quot;, &quot;);</span>
+            }
+
+<span class="nc" id="L31">            return result.toString().replaceAll(&quot;, $&quot;, &quot;&quot;);</span>
+<span class="nc" id="L32">        } catch (IOException e) {</span>
+<span class="nc" id="L33">            logger.error(&quot;Error parsing abilities: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L34">            return &quot;Error parsing abilities: &quot; + e.getMessage();</span>
+        }
+    }
+
+    public static int parseBaseExperience(String json) {
+        try {
+<span class="nc" id="L40">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L41">            return root.path(&quot;base_experience&quot;).asInt();</span>
+<span class="nc" id="L42">        } catch (IOException e) {</span>
+<span class="nc" id="L43">            logger.error(&quot;Error parsing base_experience: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L44">            return 0;</span>
+        }
+    }
+
+    public static String parseHeldItems(String json) {
+        try {
+<span class="nc" id="L50">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L51">            JsonNode heldItems = root.path(&quot;held_items&quot;);</span>
+<span class="nc" id="L52">            StringBuilder result = new StringBuilder();</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            for (JsonNode itemNode : heldItems) {</span>
+<span class="nc" id="L55">                result.append(itemNode.path(&quot;item&quot;).path(&quot;name&quot;).asText()).append(&quot;, &quot;);</span>
+            }
+
+<span class="nc" id="L58">            return result.toString().replaceAll(&quot;, $&quot;, &quot;&quot;);</span>
+<span class="nc" id="L59">        } catch (IOException e) {</span>
+<span class="nc" id="L60">            logger.error(&quot;Error parsing held items: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L61">            return &quot;Error parsing held items: &quot; + e.getMessage();</span>
+        }
+    }
+
+    public static int parseId(String json) {
+        try {
+<span class="nc" id="L67">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L68">            return root.path(&quot;id&quot;).asInt();</span>
+<span class="nc" id="L69">        } catch (IOException e) {</span>
+<span class="nc" id="L70">            logger.error(&quot;Error parsing id: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L71">            return 0;</span>
+        }
+    }
+
+    public static String parseName(String json) {
+        try {
+<span class="nc" id="L77">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L78">            return root.path(&quot;forms&quot;).get(0).path(&quot;name&quot;).asText();</span>
+<span class="nc" id="L79">        } catch (IOException e) {</span>
+<span class="nc" id="L80">            logger.error(&quot;Error parsing name: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L81">            return &quot;Error parsing name: &quot; + e.getMessage();</span>
+        }
+    }
+
+    public static String parseLocationAreaEncounters(String json) {
+        try {
+<span class="nc" id="L87">            JsonNode root = objectMapper.readTree(json);</span>
+<span class="nc" id="L88">            return root.path(&quot;location_area_encounters&quot;).asText();</span>
+<span class="nc" id="L89">        } catch (IOException e) {</span>
+<span class="nc" id="L90">            logger.error(&quot;Error parsing location area encounters: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L91">            return &quot;Error parsing location area encounters: &quot; + e.getMessage();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
