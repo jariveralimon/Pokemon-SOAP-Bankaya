@@ -109,7 +109,7 @@ Si deseas revisar la base de datos H2 que se utiliza en el servicio, una vez lev
 
 ---
 
-## Estrategia de Branching
+## Swagger
 
 - URl para revisión de Swagger:
 
