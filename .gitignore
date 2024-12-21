@@ -28,3 +28,4 @@ src/main/java/com/example/pokemon/*
 !src/main/java/com/example/pokemon/.gitkeep
 src/main/java/META-INF/JAXB/*
 !src/main/java/META-INF/JAXB/.gitkeep
+target/
