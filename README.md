@@ -109,6 +109,16 @@ Si deseas revisar la base de datos H2 que se utiliza en el servicio, una vez lev
 
 ---
 
+## Cucumber
+
+  ```
+  Solo ingresa al proyecto desde Intellij y agrega la Extension "Cucumber For Java"
+  Entras a la carpeta: src/tes/resources/features/ y entras al archivo "pokemon.feature"
+  Y dentro del archivo, en la parte superior derecha de IntelliJ puedes presionar el boton de "Run"
+  ```
+
+---
+
 ## Swagger
 
 - URl para revisión de Swagger:
