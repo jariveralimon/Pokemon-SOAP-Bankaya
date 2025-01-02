@@ -29,7 +29,7 @@ public class SwaggerController {
 
     @Operation(summary = "Obtener experiencia base de un Pokémon")
     @GetMapping("/{pokemon}/base-experience")
-    public int getBaseExperience(@PathVariable String pokemon) {
+    public String getBaseExperience(@PathVariable String pokemon) {
         return pokemonService.getBaseExperience(pokemon);
     }
 
@@ -41,7 +41,7 @@ public class SwaggerController {
 
     @Operation(summary = "Obtener el ID de un Pokémon")
     @GetMapping("/{pokemon}/id")
-    public int getId(@PathVariable String pokemon) {
+    public String getId(@PathVariable String pokemon) {
         return pokemonService.getId(pokemon);
     }
 

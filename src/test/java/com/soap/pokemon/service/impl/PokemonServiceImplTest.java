@@ -1,26 +1,27 @@
 package com.soap.pokemon.service.impl;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.soap.pokemon.dto.PokemonResponse.AbilityWrapper;
+import com.soap.pokemon.dto.PokemonResponse.ItemWrapper;
+import com.soap.pokemon.dto.PokemonResponse;
 import com.soap.pokemon.model.LogEndpoint;
 import com.soap.pokemon.repository.LogEndpointRepository;
-import com.soap.pokemon.util.JsonParser;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -40,240 +41,433 @@ class PokemonServiceImplTest {
     private PokemonServiceImpl pokemonService;
 
     private final String pokemonName = "pikachu";
-    private final String mockJsonResponse = "{\"abilities\":[{\"ability\":{\"name\":\"static\"}},{\"ability\":{\"name\":\"lightning-rod\"}}]}";
-    private final String parsedAbilities = "static, lightning-rod";
 
-    @SuppressWarnings("unchecked")
     @Test
     void testGetAbilities() {
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponse);
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setAbilities(List.of(
+                new AbilityWrapper(new PokemonResponse.Ability("static")),
+                new AbilityWrapper(new PokemonResponse.Ability("lightning-rod"))
+        ));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseAbilities(any(String.class))).thenReturn(parsedAbilities);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("abilities");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(parsedAbilities);
-            simulatedLog.setTiempoPeticion(100L);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("abilities");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("static, lightning-rod");
+        simulatedLog.setTiempoPeticion(100L);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            String abilities = pokemonService.getAbilities(pokemonName);
+        String abilities = pokemonService.getAbilities(pokemonName);
 
-            assertNotNull(abilities);
-            assertEquals(parsedAbilities, abilities);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseAbilities(mockJsonResponse), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+        assertNotNull(abilities);
+        assertEquals("static, lightning-rod", abilities);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    void testGetAbilitiesWithNullHttpRequest() {
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponse);
-
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseAbilities(any(String.class))).thenReturn(parsedAbilities);
-
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("abilities");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(parsedAbilities);
-            simulatedLog.setTiempoPeticion(100L);
-
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
-
-            String abilities = pokemonService.getAbilities(pokemonName);
-
-            // Assertions
-            assertNotNull(abilities, "The abilities no debe de ser null");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     @Test
     void testGetBaseExperience() {
-        String mockJsonResponseTestGetBaseExperience = "{\"base_experience\":112}";
-        int expectedBaseExperience = 112;
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setBaseExperience(112);
 
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetBaseExperience);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseBaseExperience(any(String.class))).thenReturn(expectedBaseExperience);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("base_experience");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("112");
+        simulatedLog.setTiempoPeticion(100L);
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("base_experience");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(String.valueOf(expectedBaseExperience));
-            simulatedLog.setTiempoPeticion(100L);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        String baseExperience = pokemonService.getBaseExperience(pokemonName);
 
-            int baseExperience = pokemonService.getBaseExperience(pokemonName);
-
-            assertEquals(expectedBaseExperience, baseExperience);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseBaseExperience(mockJsonResponseTestGetBaseExperience), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+        assertNotNull(baseExperience);
+        assertEquals("112", baseExperience);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testGetHeldItems() {
-        String mockJsonResponseTestGetHeldItems = "{\"held_items\":[{\"item\":{\"name\":\"oran-berry\"}},{\"item\":{\"name\":\"sitrus-berry\"}}]}";
-        String expectedHeldItems = "oran-berry, sitrus-berry";
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setHeldItems(List.of(
+                new ItemWrapper(new PokemonResponse.Item("oran-berry")),
+                new ItemWrapper(new PokemonResponse.Item("sitrus-berry"))
+        ));
 
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetHeldItems);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseHeldItems(any(String.class))).thenReturn(expectedHeldItems);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("held_items");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("oran-berry, sitrus-berry");
+        simulatedLog.setTiempoPeticion(100L);
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("held_items");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(expectedHeldItems);
-            simulatedLog.setTiempoPeticion(100L);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        String heldItems = pokemonService.getHeldItems(pokemonName);
 
-            String heldItems = pokemonService.getHeldItems(pokemonName);
-
-            assertNotNull(heldItems);
-            assertEquals(expectedHeldItems, heldItems);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseHeldItems(mockJsonResponseTestGetHeldItems), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+        assertNotNull(heldItems);
+        assertEquals("oran-berry, sitrus-berry", heldItems);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testGetId() {
-        String mockJsonResponseTestGetId = "{\"id\":25}";
-        int expectedId = 25;
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setId(25);
 
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetId);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseId(any(String.class))).thenReturn(expectedId);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("id");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("25");
+        simulatedLog.setTiempoPeticion(100L);
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("id");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(String.valueOf(expectedId));
-            simulatedLog.setTiempoPeticion(100L);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        String id = pokemonService.getId(pokemonName);
 
-            int id = pokemonService.getId(pokemonName);
-
-            assertEquals(expectedId, id);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseId(mockJsonResponseTestGetId), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+        assertNotNull(id);
+        assertEquals("25", id);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testGetName() {
-        String mockJsonResponseTestGetName = "{\"name\":\"pikachu\"}";
-        String expectedName = "pikachu";
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setName("pikachu");
 
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetName);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseName(any(String.class))).thenReturn(expectedName);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("name");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("pikachu");
+        simulatedLog.setTiempoPeticion(100L);
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("name");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(expectedName);
-            simulatedLog.setTiempoPeticion(100L);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        String name = pokemonService.getName(pokemonName);
 
-            String name = pokemonService.getName(pokemonName);
-
-            assertNotNull(name);
-            assertEquals(expectedName, name);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseName(mockJsonResponseTestGetName), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+        assertNotNull(name);
+        assertEquals("pikachu", name);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 
-    @SuppressWarnings("unchecked")
+    @Test
+    void testGetAbilitiesWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String abilities = pokemonService.getAbilities(pokemonName);
+
+        assertNotNull(abilities);
+        assertEquals(expectedErrorMessage, abilities);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetBaseExperienceWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String baseExperience = pokemonService.getBaseExperience(pokemonName);
+
+        assertNotNull(baseExperience);
+        assertEquals(expectedErrorMessage, baseExperience);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetHeldItemsWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String heldItems = pokemonService.getHeldItems(pokemonName);
+
+        assertNotNull(heldItems);
+        assertEquals(expectedErrorMessage, heldItems);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetIdWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String id = pokemonService.getId(pokemonName);
+
+        assertNotNull(id);
+        assertEquals(expectedErrorMessage, id);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetNameWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String name = pokemonService.getName(pokemonName);
+
+        assertNotNull(name);
+        assertEquals(expectedErrorMessage, name);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
     @Test
     void testGetLocationAreaEncounters() {
-        String mockJsonResponseTestGetLocationAreaEncounters = "{\"location_area_encounters\":\"kanto-route-2\"}";
-        String expectedLocationAreaEncounters = "kanto-route-2";
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setLocationAreaEncounters("kanto-route-2");
 
-        ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-        when(restTemplate.getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class))
-                .thenReturn(mockResponse);
-        when(mockResponse.getBody()).thenReturn(mockJsonResponseTestGetLocationAreaEncounters);
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
 
-        try (var mockStatic = mockStatic(JsonParser.class)) {
-            mockStatic.when(() -> JsonParser.parseLocationAreaEncounters(any(String.class))).thenReturn(expectedLocationAreaEncounters);
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("location_area_encounters");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("kanto-route-2");
+        simulatedLog.setTiempoPeticion(100L);
 
-            LogEndpoint simulatedLog = new LogEndpoint();
-            simulatedLog.setId(1L);
-            simulatedLog.setIpDeOrigen("127.0.0.1");
-            simulatedLog.setFechaRequest(LocalDateTime.now());
-            simulatedLog.setMetodo("location_area_encounters");
-            simulatedLog.setRequest(pokemonName);
-            simulatedLog.setResponse(expectedLocationAreaEncounters);
-            simulatedLog.setTiempoPeticion(100L);
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
 
-            when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+        String locationAreaEncounters = pokemonService.getLocationAreaEncounters(pokemonName);
 
-            String locationAreaEncounters = pokemonService.getLocationAreaEncounters(pokemonName);
+        assertNotNull(locationAreaEncounters);
+        assertEquals("kanto-route-2", locationAreaEncounters);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
 
-            assertNotNull(locationAreaEncounters);
-            assertEquals(expectedLocationAreaEncounters, locationAreaEncounters);
-            verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, String.class);
-            mockStatic.verify(() -> JsonParser.parseLocationAreaEncounters(mockJsonResponseTestGetLocationAreaEncounters), times(1));
-            verify(logRepository, times(1)).save(any(LogEndpoint.class));
-        }
+    @Test
+    void testGetLocationAreaEncountersWithException() {
+        String expectedErrorMessage = "Error: Simulated RestClientException";
+
+        // Simular excepción al realizar la petición REST
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenThrow(new RestClientException("Simulated RestClientException"));
+
+        // Verificar el flujo en caso de excepción
+        String locationAreaEncounters = pokemonService.getLocationAreaEncounters(pokemonName);
+
+        assertNotNull(locationAreaEncounters);
+        assertEquals(expectedErrorMessage, locationAreaEncounters);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetAbilitiesThrowsException() {
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setAbilities(null); // Simular que las habilidades son null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("abilities");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontraron habilidades para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String abilities = pokemonService.getAbilities(pokemonName);
+
+        assertNotNull(abilities);
+        assertEquals("Error: No se encontraron habilidades para el Pokémon proporcionado.", abilities);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetBaseExperienceThrowsException() {
+        PokemonResponse mockResponse = null; // Simular que el objeto completo es null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("base_experience");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontro la experiencia para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String baseExperience = pokemonService.getBaseExperience(pokemonName);
+
+        assertNotNull(baseExperience);
+        assertEquals("Error: No se encontro la experiencia para el Pokémon proporcionado.", baseExperience);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetHeldItemsThrowsException() {
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setHeldItems(null); // Simular que los objetos sostenidos son null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("held_items");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontraron objetos sostenidos para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String heldItems = pokemonService.getHeldItems(pokemonName);
+
+        assertNotNull(heldItems);
+        assertEquals("Error: No se encontraron objetos sostenidos para el Pokémon proporcionado.", heldItems);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetIdThrowsException() {
+        PokemonResponse mockResponse = null; // Simular que el objeto completo es null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("id");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontro el id para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String id = pokemonService.getId(pokemonName);
+
+        assertNotNull(id);
+        assertEquals("Error: No se encontro el id para el Pokémon proporcionado.", id);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetLocationAreaEncountersThrowsException() {
+        PokemonResponse mockResponse = new PokemonResponse();
+        mockResponse.setLocationAreaEncounters(null); // Simular que las áreas específicas son null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("location_area_encounters");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontro las áreas específicas para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String locationAreaEncounters = pokemonService.getLocationAreaEncounters(pokemonName);
+
+        assertNotNull(locationAreaEncounters);
+        assertEquals("Error: No se encontro las áreas específicas para el Pokémon proporcionado.", locationAreaEncounters);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
+    }
+
+    @Test
+    void testGetNameThrowsException() {
+        PokemonResponse mockResponse = null; // Simular que el objeto completo es null
+
+        when(restTemplate.getForEntity(any(String.class), eq(PokemonResponse.class)))
+                .thenReturn(ResponseEntity.ok(mockResponse));
+
+        LogEndpoint simulatedLog = new LogEndpoint();
+        simulatedLog.setId(1L);
+        simulatedLog.setIpDeOrigen("127.0.0.1");
+        simulatedLog.setFechaRequest(LocalDateTime.now());
+        simulatedLog.setMetodo("name");
+        simulatedLog.setRequest(pokemonName);
+        simulatedLog.setResponse("Error: No se encontro el nombre para el Pokémon proporcionado.");
+        simulatedLog.setTiempoPeticion(100L);
+
+        when(logRepository.save(any(LogEndpoint.class))).thenReturn(simulatedLog);
+
+        String name = pokemonService.getName(pokemonName);
+
+        assertNotNull(name);
+        assertEquals("Error: No se encontro el nombre para el Pokémon proporcionado.", name);
+        verify(restTemplate, times(1)).getForEntity("https://pokeapi.co/api/v2/pokemon/" + pokemonName, PokemonResponse.class);
+        verify(logRepository, times(1)).save(any(LogEndpoint.class));
     }
 }

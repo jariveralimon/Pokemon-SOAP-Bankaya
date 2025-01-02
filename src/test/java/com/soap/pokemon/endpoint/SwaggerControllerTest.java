@@ -50,7 +50,7 @@ class SwaggerControllerTest {
     @Test
     void getBaseExperience_shouldReturnBaseExperience() throws Exception {
         String pokemon = "pikachu";
-        int baseExperience = 112;
+        String baseExperience = "112";
         when(pokemonService.getBaseExperience(pokemon)).thenReturn(baseExperience);
 
         mockMvc.perform(get("/ws/{pokemon}/base-experience", pokemon)
@@ -78,7 +78,7 @@ class SwaggerControllerTest {
     @Test
     void getId_shouldReturnId() throws Exception {
         String pokemon = "pikachu";
-        int id = 25;
+        String id = "25";
         when(pokemonService.getId(pokemon)).thenReturn(id);
 
         mockMvc.perform(get("/ws/{pokemon}/id", pokemon)

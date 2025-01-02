@@ -67,10 +67,14 @@ Puedes acceder al repositorio del proyecto en GitHub desde la siguiente URL:
 - Una vez creado, obtendrás un **token** para acceder al análisis del proyecto.
 
 ### **Paso 2: Ejecutar Análisis en SonarQube**
-- Para ejecutar el análisis en SonarQube, usa el siguiente comando:
+- El proyecto en sonarqube creara un código que se ejecuta en la terminal, parecido al siguiente:
 
   ```bash
-  mvn sonar:sonar -Dsonar.login=<TOKEN>
+      mvn clean verify sonar:sonar \
+      -Dsonar.projectKey=pokemns \
+      -Dsonar.projectName='pokemon' \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.token=sqp_d361bb7bc6f416ec75e763204acf26884516ba51
   ```
 
   Recuerda reemplazar `<TOKEN>` con el token generado al crear el proyecto en SonarQube.

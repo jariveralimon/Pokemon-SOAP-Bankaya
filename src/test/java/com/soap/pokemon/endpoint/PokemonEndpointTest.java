@@ -52,7 +52,7 @@ class PokemonEndpointTest {
         // Arrange
         GetBaseExperienceRequest request = new GetBaseExperienceRequest();
         request.setPokemon("pikachu");
-        int expectedBaseExperience = 112;
+        String expectedBaseExperience = "112";
 
         when(pokemonService.getBaseExperience("pikachu")).thenReturn(expectedBaseExperience);
 
@@ -84,7 +84,7 @@ class PokemonEndpointTest {
         // Arrange
         GetIdRequest request = new GetIdRequest();
         request.setPokemon("pikachu");
-        int expectedId = 25;
+        String expectedId = "25";
 
         when(pokemonService.getId("pikachu")).thenReturn(expectedId);
 

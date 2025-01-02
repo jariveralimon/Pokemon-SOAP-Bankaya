@@ -46,14 +46,14 @@ public class PokemonEndpointSteps {
 
     @When("realizo una peticion SOAP para obtener la experiencia base del Pokemon {string}")
     public void realizoUnaPeticionSOAPParaObtenerLaExperienciaBaseDelPokemon(String pokemon) {
-        Mockito.when(pokemonService.getBaseExperience(pokemon)).thenReturn(112);
+        Mockito.when(pokemonService.getBaseExperience(pokemon)).thenReturn("112");
         var request = new GetBaseExperienceRequest();
         request.setPokemon(pokemon);
         baseExperienceResponse = pokemonEndpoint.getBaseExperience(request);
     }
 
-    @Then("la respuesta debe contener la experiencia base {int}")
-    public void laRespuestaDebeContenerLaExperienciaBase(int expectedBaseExperience) {
+    @Then("la respuesta debe contener la experiencia base {string}")
+    public void laRespuestaDebeContenerLaExperienciaBase(String expectedBaseExperience) {
         assertNotNull(baseExperienceResponse);
         assertEquals(expectedBaseExperience, baseExperienceResponse.getBaseExperience());
     }
@@ -74,14 +74,14 @@ public class PokemonEndpointSteps {
 
     @When("realizo una peticion SOAP para obtener el ID del Pokemon {string}")
     public void realizoUnaPeticionSOAPParaObtenerElIDDelPokemon(String pokemon) {
-        Mockito.when(pokemonService.getId(pokemon)).thenReturn(25);
+        Mockito.when(pokemonService.getId(pokemon)).thenReturn("25");
         var request = new GetIdRequest();
         request.setPokemon(pokemon);
         idResponse = pokemonEndpoint.getId(request);
     }
 
-    @Then("la respuesta debe contener el ID {int}")
-    public void laRespuestaDebeContenerElID(int expectedId) {
+    @Then("la respuesta debe contener el ID {string}")
+    public void laRespuestaDebeContenerElID(String expectedId) {
         assertNotNull(idResponse);
         assertEquals(expectedId, idResponse.getId());
     }

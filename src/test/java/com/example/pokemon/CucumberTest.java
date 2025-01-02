@@ -10,5 +10,6 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasspathResource("features") // Ruta de tus archivos .feature
 @ConfigurationParameter(key = "cucumber.glue", value = "com.example.pokemon.steps") // Ruta de tus pasos
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty, html:target/cucumber-reports.html") // Reporte HTML
+@SuppressWarnings("java:S2187")
 public class CucumberTest {
 }

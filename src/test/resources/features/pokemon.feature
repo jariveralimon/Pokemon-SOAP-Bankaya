@@ -11,7 +11,7 @@ Feature: Servicios SOAP para consultar información de Pokémon
   Scenario: Obtener la experiencia base de un Pokémon
     Given el servicio SOAP esta disponible
     When realizo una peticion SOAP para obtener la experiencia base del Pokemon "pikachu"
-    Then la respuesta debe contener la experiencia base 112
+    Then la respuesta debe contener la experiencia base "112"
 
   Scenario: Obtener los objetos que sostiene un Pokémon
     Given el servicio SOAP esta disponible
@@ -21,7 +21,7 @@ Feature: Servicios SOAP para consultar información de Pokémon
   Scenario: Obtener el ID de un Pokémon
     Given el servicio SOAP esta disponible
     When realizo una peticion SOAP para obtener el ID del Pokemon "pikachu"
-    Then la respuesta debe contener el ID 25
+    Then la respuesta debe contener el ID "25"
 
   Scenario: Obtener el nombre de un Pokémon
     Given el servicio SOAP esta disponible

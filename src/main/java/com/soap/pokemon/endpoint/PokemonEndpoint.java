@@ -42,7 +42,7 @@ public class PokemonEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBaseExperienceRequest")
     @ResponsePayload
     public GetBaseExperienceResponse getBaseExperience(@RequestPayload GetBaseExperienceRequest request) {
-        int baseExperience = pokemonService.getBaseExperience(request.getPokemon());
+        String baseExperience = pokemonService.getBaseExperience(request.getPokemon());
         GetBaseExperienceResponse result = new GetBaseExperienceResponse();
         result.setBaseExperience(baseExperience);
         return result;
@@ -60,7 +60,7 @@ public class PokemonEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getIdRequest")
     @ResponsePayload
     public GetIdResponse getId(@RequestPayload GetIdRequest request) {
-        int id = pokemonService.getId(request.getPokemon());
+        String id = pokemonService.getId(request.getPokemon());
         GetIdResponse result = new GetIdResponse();
         result.setId(id);
         return result;
